@@ -15,3 +15,6 @@ class Config:
     # 项目路径参数
     DATA_DIR = 'anonymisedData'         # 数据集路径
     RESULT_DIR = 'results'              # 结果输出路径
+
+    #选择模型
+    model_name = "RandomForest"
