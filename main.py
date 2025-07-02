@@ -11,7 +11,7 @@ def parse_arguments():
 
     # 模型参数
     parser.add_argument('-m', '--model', type=str, default='LR',
-                        choices=['LR', 'LogisticRegression', 'NN', 'NeuralNetworks','RF','RandomForest'],
+                        choices=['LR', 'LogisticRegression', 'NN', 'NeuralNetworks','RF','RandomForest','GB'],
                         help='选择模型，默认为逻辑回归模型')
     
 
@@ -27,8 +27,8 @@ def main():
         pass
     elif args.model == 'RF'or args.model == 'RandomForest':
         create_randomforest()
-
-
+    elif args.model == 'GB':
+        create_gradient_boosting()
 
 if __name__ == '__main__':
     main()
