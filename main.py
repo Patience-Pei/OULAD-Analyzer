@@ -24,7 +24,7 @@ def main():
     if args.model == 'LR' or args.model == 'LogisticRegression':
         create_logistic_regression()
     elif args.model == 'NN' or args.model == 'NeuralNetworks':
-        pass
+        create_neural_networks()
     elif args.model == 'RF'or args.model == 'RandomForest':
         create_randomforest()
     elif args.model == 'GB':
