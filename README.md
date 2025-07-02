@@ -22,9 +22,10 @@ labFinal/
 pip install -r requirements.txt
 ```
 
-2. 运行预测脚本：
+2. 运行程序：
 ```bash
-python main.py
+python main.py --model LR   # 运行逻辑回归模型
+python main.py --model NN   # 运行神经网络模型
 ```
 
 // TODO

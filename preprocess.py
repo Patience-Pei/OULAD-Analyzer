@@ -84,8 +84,15 @@ def preprocess_data(df):
     df_scaled['label'] = df['label'].values
     return df_scaled
 
-
-if __name__ == '__main__':
+def get_data():
     df = load_data()
     prep_df = preprocess_data(df)
-    print(prep_df)
+    return prep_df
+
+
+
+if __name__ == '__main__':
+    df = get_data()
+    df_array = df.to_numpy()
+    print(df, type(df))
+    print(df_array, type(df_array))
