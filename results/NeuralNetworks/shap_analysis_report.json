@@ -1,0 +1,157 @@
+{
+  "overall_insights": [
+    "Top 5 most important features: num_assessments, avg_score, gender_M, gender_F, studied_credits"
+  ],
+  "feature_analysis": [
+    {
+      "feature": "num_assessments",
+      "mean_abs_impact": 0.31931330245068656,
+      "directionality_correlation": -0.8116889703065037,
+      "positive_impact_percent": 52.7844422048728,
+      "negative_impact_percent": -22.994282262295442,
+      "interpretation": "Higher values of num_assessments generally decrease the prediction."
+    },
+    {
+      "feature": "avg_score",
+      "mean_abs_impact": 0.1481250424139091,
+      "directionality_correlation": -0.7916091298084712,
+      "positive_impact_percent": 27.322279868282585,
+      "negative_impact_percent": -12.300063510176832,
+      "interpretation": "Higher values of avg_score generally decrease the prediction."
+    },
+    {
+      "feature": "gender_M",
+      "mean_abs_impact": 0.020340603845598323,
+      "directionality_correlation": -0.4948185364296389,
+      "positive_impact_percent": 4.723360033706035,
+      "negative_impact_percent": -2.7504482830205337,
+      "interpretation": "Higher values of gender_M generally decrease the prediction."
+    },
+    {
+      "feature": "gender_F",
+      "mean_abs_impact": 0.019932326623004943,
+      "directionality_correlation": -0.4621121857950073,
+      "positive_impact_percent": 3.218979500025964,
+      "negative_impact_percent": -4.893041963298595,
+      "interpretation": "Higher values of gender_F generally decrease the prediction."
+    },
+    {
+      "feature": "studied_credits",
+      "mean_abs_impact": 0.018931301031655995,
+      "directionality_correlation": 0.2773939941016765,
+      "positive_impact_percent": 3.888392599614664,
+      "negative_impact_percent": -2.639642238887403,
+      "interpretation": "The relationship between studied_credits and prediction is complex and non-linear."
+    }
+  ],
+  "sample_analysis": [
+    {
+      "type": "most_impact",
+      "sample_idx": 56,
+      "actual_label": 1,
+      "predicted_label": 1,
+      "prediction_prob": 1.0,
+      "top_features": [
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": 0.0,
+          "impact": "negative"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": 0.0,
+          "impact": "negative"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": 0.0,
+          "impact": "negative"
+        }
+      ]
+    },
+    {
+      "type": "least_impact",
+      "sample_idx": 32,
+      "actual_label": 0,
+      "predicted_label": 0,
+      "prediction_prob": 5.551115123125783e-17,
+      "top_features": [
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": -0.023259827448586155,
+          "impact": "negative"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": -0.023259827448586155,
+          "impact": "negative"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": -0.023259827448586155,
+          "impact": "negative"
+        }
+      ]
+    },
+    {
+      "type": "correctly_classified",
+      "sample_idx": 0,
+      "actual_label": 0,
+      "predicted_label": 0,
+      "prediction_prob": 0.0,
+      "top_features": [
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": 0.0,
+          "impact": "negative"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": 0.0,
+          "impact": "negative"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": -0.330104261636734,
+          "shap_value": 0.0,
+          "impact": "negative"
+        }
+      ]
+    },
+    {
+      "type": "incorrectly_classified",
+      "sample_idx": 1,
+      "actual_label": 1,
+      "predicted_label": 0,
+      "prediction_prob": 0.0,
+      "top_features": [
+        {
+          "feature": "num_of_prev_attempts",
+          "value": 1.8447787761688232,
+          "shap_value": 0.058178837553540724,
+          "impact": "positive"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": 1.8447787761688232,
+          "shap_value": 0.058178837553540724,
+          "impact": "positive"
+        },
+        {
+          "feature": "num_of_prev_attempts",
+          "value": 1.8447787761688232,
+          "shap_value": 0.058178837553540724,
+          "impact": "positive"
+        }
+      ]
+    }
+  ]
+}

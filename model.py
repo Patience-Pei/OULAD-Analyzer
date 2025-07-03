@@ -1,46 +1,17 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
 from torch.optim.lr_scheduler import CosineAnnealingLR
-from torch.utils.data import Dataset, DataLoader, TensorDataset
-from torchvision import models
+from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 import time
 from config import *
-from preprocess import get_data
-
-def model_data():
-    '''将 DataFrame 中的数据转换为可被模型直接使用的数据'''
-    # 加载数据集并转换成 ndarray 类型
-    df = get_data()
-    df_array = df.to_numpy()
-
-    # 特征向量与标签分离
-    X = df_array[:, :-1]
-    y = df_array[:, -1]
-
-    # 分割出训练集和测试集
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, 
-        y,
-        test_size=Config.TRAIN_TEST_SPLIT,
-        random_state=Config.RANDOM_STATE,
-        stratify=y
-    )
-
-    # 特征标准化
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-
-    return df, X_train_scaled, y_train, X_test_scaled, y_test
+from preprocess import get_data, model_data
+from evaluate import evaluate, shap_evaluate
 
 def create_logistic_regression():
     '''使用逻辑回归模型进行预测'''
@@ -62,23 +33,34 @@ def create_logistic_regression():
     print("\n分类报告:")
     print(classification_report(y_test, y_pred))
 
-    # 评估每项数据的贡献度
-    feature_names = df.columns.tolist()[:-1]
-    feature_importance = pd.DataFrame({
-        'Feature': feature_names,
-        'Coefficient': model.coef_[0],
-        'Absolute_Coefficient': abs(model.coef_[0])
-    })
+    # 最终使用 SHAP 值评估模型
+    shap_evaluate(model, 'LogisticRegression')
 
-    # 按重要性排序
-    feature_importance = feature_importance.sort_values('Absolute_Coefficient', ascending=False)
+    # if hasattr(model, "predict_proba"):
+    #     y_prob = model.predict_proba(X_test_scaled)[:, 1]
+    #     roc_auc = roc_auc_score(y_test, y_prob)
+    #     print(f"ROC AUC分数: {roc_auc:.4f}")
+    # else:
+    #     print("模型不支持predict_proba，无法计算ROC AUC。")
 
-    # 可视化
-    plt.figure(figsize=(14, 6))
-    plt.barh(feature_importance['Feature'], feature_importance['Absolute_Coefficient'])
-    plt.xlabel('Feature Importance (Absolute Coefficient)')
-    plt.title('Feature Importance from Logistic Regression')
-    plt.show()
+    # # 评估每项数据的贡献度
+    # feature_names = df.columns.tolist()[:-1]
+    # feature_importance = pd.DataFrame({
+    #     'Feature': feature_names,
+    #     'Coefficient': model.coef_[0],
+    #     'Absolute_Coefficient': abs(model.coef_[0])
+    # })
+
+    # # 按重要性排序
+    # feature_importance = feature_importance.sort_values('Absolute_Coefficient', ascending=False)
+
+    # # 可视化
+    # plt.figure(figsize=(14, 6))
+    # plt.barh(feature_importance['Feature'], feature_importance['Absolute_Coefficient'])
+    # plt.xlabel('Feature Importance (Absolute Coefficient)')
+    # plt.title('Feature Importance from Logistic Regression')
+    # plt.gca().invert_yaxis()
+    # plt.show()
 
 
 class CustomFCNN(nn.Module):
@@ -108,7 +90,7 @@ class CustomFCNN(nn.Module):
         x = self.dropout(x)
         # 输出层
         x = self.fc4(x)
-        return self.sigmoid(x)
+        return x
     
 def get_dataset():
     # 获取可处理数据
@@ -133,7 +115,7 @@ def get_dataset():
 def train_model(model):
     '''对神经网络模型进行训练的函数'''
     # 定义损失函数、优化器和学习率调度器
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.AdamW(
         model.parameters(), 
         lr=Config.LEARNING_RATE, 
@@ -151,6 +133,7 @@ def train_model(model):
 
     model.train()
     model.to(Config.DEVICE)
+    max_acc = 0.0
     start_time = time.time()
     for epoch in range(Config.EPOCHS):
         epoch_start_time = time.time()
@@ -159,6 +142,8 @@ def train_model(model):
         train_loss, train_acc = train_epoch(model, criterion, optimizer, scheduler, scaler, train_loader)
         # 测试模型
         test_loss, test_acc = test_model(model, scaler, criterion, test_loader)
+        if test_acc > max_acc:
+            max_acc = test_acc
 
         # 更新学习率
         scheduler.step()
@@ -173,7 +158,10 @@ def train_model(model):
                 f'Time: {epoch_time:.2f}s')
         
     total_time = time.time() - start_time
-    print(f'\nTraining complete. Elapsed time: {total_time:.2f}s')
+    print(f'\nTraining complete. Elapsed time: {total_time:.2f}s. Highest test accuracy: {max_acc:.4f}')
+
+    # 最终使用 SHAP 值评估模型
+    shap_evaluate(model, 'NeuralNetworks')
 
 
 def train_epoch(model, criterion, optimizer, scheduler, scaler, train_loader):
@@ -203,7 +191,7 @@ def train_epoch(model, criterion, optimizer, scheduler, scaler, train_loader):
             optimizer.step()
 
         running_loss += loss.item() * data.size(0)
-        probs = output.squeeze().cpu().detach().numpy()
+        probs = torch.sigmoid(output).flatten().cpu().detach().numpy()
         preds = (probs > 0.5).astype(int)
         all_labels.extend(target.cpu().detach().numpy())
         all_preds.extend(preds)
@@ -234,7 +222,7 @@ def test_model(model, scaler, criterion, test_loader):
                 loss = criterion(output.squeeze(), target)
 
             test_loss += loss.item() * data.size(0)
-            probs = output.squeeze().cpu().detach().numpy()
+            probs = torch.sigmoid(output).flatten().cpu().detach().numpy()
             preds = (probs > 0.5).astype(int)
             all_labels.extend(target.cpu().detach().numpy())
             all_preds.extend(preds)
@@ -247,9 +235,9 @@ def test_model(model, scaler, criterion, test_loader):
 
 def create_neural_networks():
     # 设置随机种子
-    torch.manual_seed(42)
+    torch.manual_seed(Config.RANDOM_STATE)
     if torch.cuda.is_available():
-        torch.cuda.manual_seed(42)
+        torch.cuda.manual_seed(Config.RANDOM_STATE)
 
     # 创建模型并进行训练
     model = CustomFCNN()

@@ -6,7 +6,7 @@ class Config:
     # 超参数配置
     TRAIN_TEST_SPLIT = 0.2              # 测试数据的比例
     LOGISTIC_REGRESSION_MAX_ITER = 1000 # 逻辑回归迭代轮数          
-    EPOCHS = 50                         # 神经网络训练的 epoch 数
+    EPOCHS = 30                         # 神经网络训练的 epoch 数
     BATCH_SIZE = 512                    # 训练批次大小
     LEARNING_RATE = 0.001               # 学习率
     WEIGHT_DECAY = 1e-5

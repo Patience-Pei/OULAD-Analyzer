@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 from config import *
 
 def load_data():
@@ -88,6 +89,32 @@ def get_data():
     df = load_data()
     prep_df = preprocess_data(df)
     return prep_df
+
+def model_data():
+    '''将 DataFrame 中的数据转换为可被模型直接使用的数据'''
+    # 加载数据集并转换成 ndarray 类型
+    df = get_data()
+    df_array = df.to_numpy()
+
+    # 特征向量与标签分离
+    X = df_array[:, :-1]
+    y = df_array[:, -1]
+
+    # 分割出训练集和测试集
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, 
+        y,
+        test_size=Config.TRAIN_TEST_SPLIT,
+        random_state=Config.RANDOM_STATE,
+        stratify=y
+    )
+
+    # 特征标准化
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    return df, X_train_scaled, y_train, X_test_scaled, y_test
 
 
 
