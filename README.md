@@ -9,7 +9,7 @@ labFinal/
 │   ├── studentRegistration.csv
 │   ├── studentVle.csv
 │   └── vle.csv
-├── results/                    # 按模型类别分类存放评估结果的命令
+├── results/                    # 按模型类别分类存放评估结果的目录
 │   ├── LogisticRegression/
 │   ├── NeuralNetworks/
 │   └── RandomForest/
@@ -18,7 +18,7 @@ labFinal/
 ├── preprocess.py               # 数据预处理
 ├── model.py                    # 算法模型构建
 ├── evaluate.py                 # 特征重要性评估
-├── requirements.txt 
+├── requirements.txt            # 程序环境依赖
 └── README.md
 ```
 
@@ -33,9 +33,3 @@ pip install -r requirements.txt
 python main.py --model LR   # 运行逻辑回归模型
 python main.py --model NN   # 运行神经网络模型
 ```
-
-// TODO
-
-### 可选参数
-
-// TODO
