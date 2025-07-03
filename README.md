@@ -9,9 +9,15 @@ labFinal/
 │   ├── studentRegistration.csv
 │   ├── studentVle.csv
 │   └── vle.csv
+├── results/                    # 按模型类别分类存放评估结果的命令
+│   ├── LogisticRegression/
+│   ├── NeuralNetworks/
+│   └── RandomForest/
 ├── config.py                   # 参数配置文件
 ├── main.py                     # 程序主入口
 ├── preprocess.py               # 数据预处理
+├── model.py                    # 算法模型构建
+├── evaluate.py                 # 特征重要性评估
 ├── requirements.txt 
 └── README.md
 ```
