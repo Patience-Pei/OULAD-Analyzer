@@ -1,0 +1,12 @@
+Prediction Accuracy: 0.8216
+ROC AUC Score: 0.8121
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0       0.84      0.86      0.85      2897
+         1.0       0.79      0.76      0.78      1990
+
+    accuracy                           0.82      4887
+   macro avg       0.82      0.81      0.81      4887
+weighted avg       0.82      0.82      0.82      4887

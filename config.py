@@ -11,9 +11,10 @@ class Config:
     LEARNING_RATE = 0.001               # 学习率
     WEIGHT_DECAY = 1e-5
     DROPOUT_RATE = 0.2                  # dropout 层中的丢弃概率
-    DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')   # 运行设备
     MIXED_PRECISION = True              # 启用混合精度训练
     N_WEEKS = 4                         # 选用前 N 周的数据
+    VERBOSE = False                     # 是否显示 MLP 训练日志（仅对 sklearn 模型）
+    DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')   # 运行设备
 
     # 项目路径参数
     DATA_DIR = 'anonymisedData'         # 数据集路径

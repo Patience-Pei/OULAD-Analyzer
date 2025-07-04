@@ -6,9 +6,7 @@ from config import *
 
 def load_data():
     """
-    加载OULAD主要数据表，自动补全学生评估表的课程信息，融合多表特征。
-    返回：
-        df (pd.DataFrame): 合并后的原始特征数据表。
+    加载 OULAD 数据表并合并多表信息
     """
     # 读取各表
     student_info = pd.read_csv(os.path.join(Config.DATA_DIR, "studentInfo.csv"))
@@ -50,19 +48,6 @@ def load_data():
 def preprocess_data(df):
     """
     对合并后的OULAD数据进行清洗和特征工程，生成可直接用于建模的特征和标签。
-
-    参数：
-        df (pd.DataFrame): load_data 返回的合并原始数据表。
-    返回：
-        df (pd.DataFrame): 仅包含有效特征和标签的建模数据表，所有特征为数值型。
-    步骤：
-        1. 去除无 final_result 的样本。
-        2. 生成学业困难标签（Fail/Withdrawn=1，其余=0）。
-        3. 选择关键特征，去除缺失值。
-        4. 对类别特征做独热编码。
-    注意事项：
-        - 返回的DataFrame可直接用于模型训练和评估。
-        - 如需调整特征或标签定义，可修改本函数。
     """
     # 只保留有final_result的样本
     df = df.dropna(subset=["final_result"])

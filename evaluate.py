@@ -8,8 +8,40 @@ from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 from config import *
 from preprocess import model_data
 
+def evaluate(model, model_name, test_data, labels):
+    '''
+    评估模型
+    '''
+    # 使用模型进行预测并计算准确率、ROC AUC 分数
+    predictions = model.predict(test_data)
+    acc = accuracy_score(labels, predictions)
+    auc_score = roc_auc_score(labels, predictions)
+    report = classification_report(labels, predictions)
+
+    print(f"分类准确率: {acc:.4f}")
+    print(f"ROC AUC 分数: {auc_score:.4f}")
+    print("\n分类报告:")
+    print(report)
+
+    # 确保结果目录存在
+    save_path = os.path.join(Config.RESULT_DIR, model_name)
+    os.makedirs(save_path, exist_ok=True)
+    report_path = os.path.join(save_path, 'classification_report.txt')
+
+    # 保存分类报告到文本文件
+    with open(report_path, 'w') as f:
+        f.write(f"Prediction Accuracy: {acc:.4f}\n")
+        f.write(f"ROC AUC Score: {auc_score:.4f}\n")
+        f.write("\nClassification Report:\n")
+        f.write(report)
+
+    # 最终使用 SHAP 值评估模型
+    shap_evaluate(model, model_name)
+
 def shap_evaluate(model, model_name):
-    '''使用 SHAP 值对模型进行评估和可视化'''
+    '''
+    使用 SHAP 值对模型进行评估和可视化
+    '''
     df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
     # 确保特征名称是字符串列表
     feature_names = df.columns.tolist()[:-1]
@@ -26,25 +58,29 @@ def shap_evaluate(model, model_name):
     background_data = torch.Tensor(X_train_scaled[:500]).to(Config.DEVICE)
     
     # 创建预测函数和解释器
-    if model_name == 'NeuralNetworks':
-        def model_predict(x):
-            model.eval()
-            with torch.no_grad():
-                x_tensor = torch.tensor(x, dtype=torch.float32).to(Config.DEVICE)
-                logits = model(x_tensor)
-                probabilities = torch.sigmoid(logits).cpu().numpy()
-                preds = (probabilities > 0.5).astype(int)
-            return preds
+    # if model_name == 'NeuralNetworks':
+    #     def model_predict(x):
+    #         model.eval()
+    #         with torch.no_grad():
+    #             x_tensor = torch.tensor(x, dtype=torch.float32).to(Config.DEVICE)
+    #             logits = model(x_tensor)
+    #             probabilities = torch.sigmoid(logits).cpu().numpy()
+    #             preds = (probabilities > 0.5).astype(int)
+    #         return preds
 
-        explainer = shap.KernelExplainer(
-            model_predict, 
-            shap.sample(background_data.cpu().numpy(), 100)
-        )
-    else:
-        explainer = shap.KernelExplainer(
-            model.predict,
-            shap.sample(background_data.cpu().numpy(), 100)
-        )
+    #     explainer = shap.KernelExplainer(
+    #         model_predict, 
+    #         shap.sample(background_data.cpu().numpy(), 100)
+    #     )
+    # else:
+    #     explainer = shap.KernelExplainer(
+    #         model.predict,
+    #         shap.sample(background_data.cpu().numpy(), 100)
+    #     )
+    explainer = shap.KernelExplainer(
+        model.predict,
+        shap.sample(background_data.cpu().numpy(), 100)
+    )
     
     # 计算SHAP值
     print("Calculating SHAP values...")
@@ -93,7 +129,7 @@ def shap_evaluate(model, model_name):
     plt.close()
     print(f"Saved beeswarm plot: {beeswarm_path}")
     
-    # 3. 特征重要性条形图 - 修复错误
+    # 3. 特征重要性条形图
     # 计算平均绝对SHAP值
     if len(shap_values) > 1:
         mean_abs_shap = np.abs(shap_values).mean(axis=0)

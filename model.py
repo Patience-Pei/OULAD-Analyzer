@@ -6,17 +6,18 @@ from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
-import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 import time
 from config import *
-from preprocess import get_data, model_data
-from evaluate import shap_evaluate
+from preprocess import model_data
+from evaluate import evaluate
 
 def create_logistic_regression():
-    '''使用逻辑回归模型进行预测'''
+    '''
+    逻辑回归模型
+    '''
     # 创建逻辑回归模型
     model = LogisticRegression(
         max_iter=Config.LOGISTIC_REGRESSION_MAX_ITER,
@@ -27,46 +28,136 @@ def create_logistic_regression():
     df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
 
     # 训练模型
+    start_time = time.time()
+
+    print("开始训练模型...")
     model.fit(X_train_scaled, y_train)
+    print("训练已结束")
+
+    checkpoint = time.time()
+    train_time = checkpoint - start_time
 
     # 预测和评估
-    y_pred = model.predict(X_test_scaled)
-    print(f"分类准确率: {accuracy_score(y_test, y_pred):.4f}")
-    print("\n分类报告:")
-    print(classification_report(y_test, y_pred))
+    print("开始评估模型...")
+    evaluate(model, 'LogisticRegression', X_test_scaled, y_test)
+    
+    # 计算时间
+    end_time = time.time()
+    eval_time = end_time - checkpoint
+    total_time = end_time - start_time
 
-    # 最终使用 SHAP 值评估模型
-    shap_evaluate(model, 'LogisticRegression')
+    print(f"模型训练时间: {train_time:.3}s | 评估时间: {eval_time:.3}s | 总运行时间: {total_time:.3}s")
 
-    # if hasattr(model, "predict_proba"):
-    #     y_prob = model.predict_proba(X_test_scaled)[:, 1]
-    #     roc_auc = roc_auc_score(y_test, y_prob)
-    #     print(f"ROC AUC分数: {roc_auc:.4f}")
-    # else:
-    #     print("模型不支持predict_proba，无法计算ROC AUC。")
 
-    # # 评估每项数据的贡献度
-    # feature_names = df.columns.tolist()[:-1]
-    # feature_importance = pd.DataFrame({
-    #     'Feature': feature_names,
-    #     'Coefficient': model.coef_[0],
-    #     'Absolute_Coefficient': abs(model.coef_[0])
-    # })
+def create_neural_networks():
+    # 设置随机种子
+    torch.manual_seed(Config.RANDOM_STATE)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(Config.RANDOM_STATE)
 
-    # # 按重要性排序
-    # feature_importance = feature_importance.sort_values('Absolute_Coefficient', ascending=False)
+    # 创建模型并进行训练
+    # model = CustomFCNN()
+    # train_model(model)
 
-    # # 可视化
-    # plt.figure(figsize=(14, 6))
-    # plt.barh(feature_importance['Feature'], feature_importance['Absolute_Coefficient'])
-    # plt.xlabel('Feature Importance (Absolute Coefficient)')
-    # plt.title('Feature Importance from Logistic Regression')
-    # plt.gca().invert_yaxis()
-    # plt.show()
+    model = MLPClassifier(
+        hidden_layer_sizes=(64, 32),
+        activation='logistic',
+        solver='adam',
+        max_iter=200,
+        random_state=Config.RANDOM_STATE,
+        verbose=Config.VERBOSE
+    )
+
+    df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
+    # 训练模型
+    start_time = time.time()
+
+    print("开始训练模型...")
+    model.fit(X_train_scaled, y_train)
+    print("训练已结束")
+
+    checkpoint = time.time()
+    train_time = checkpoint - start_time
+
+    # 预测和评估
+    print("开始评估模型...")
+    evaluate(model, 'NeuralNetworks', X_test_scaled, y_test)
+
+    # 计算时间
+    end_time = time.time()
+    eval_time = end_time - checkpoint
+    total_time = end_time - start_time
+
+    print(f"模型训练时间: {train_time:.3}s | 评估时间: {eval_time:.3}s | 总运行时间: {total_time:.3}s")
+
+
+def create_randomforest():
+    """
+    随机森林
+    """
+    # 创建模型
+    model = RandomForestClassifier(n_estimators=100, 
+                                   random_state=Config.RANDOM_STATE, 
+                                   class_weight='balanced')
+    
+    df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
+
+    # 训练模型
+    start_time = time.time()
+
+    print("开始训练模型...")
+    model.fit(X_train_scaled, y_train)
+    print("训练已结束")
+
+    checkpoint = time.time()
+    train_time = checkpoint - start_time
+
+    # 预测和评估
+    print("开始评估模型...")
+    evaluate(model, 'RandomForest', X_test_scaled, y_test)
+
+    # 计算时间
+    end_time = time.time()
+    eval_time = end_time - checkpoint
+    total_time = end_time - start_time
+
+    print(f"模型训练时间: {train_time:.3}s | 评估时间: {eval_time:.3}s | 总运行时间: {total_time:.3}s")
+
+
+def create_gradient_boosting():
+    """
+    梯度提升树
+    """
+    model = GradientBoostingClassifier(random_state=Config.RANDOM_STATE)
+
+    df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
+
+    # 训练模型
+    start_time = time.time()
+
+    print("开始训练模型...")
+    model.fit(X_train_scaled, y_train)
+    print("训练已结束")
+
+    checkpoint = time.time()
+    train_time = checkpoint - start_time
+
+    # 预测和评估
+    print("开始评估模型...")
+    evaluate(model, 'GradientBoosting', X_test_scaled, y_test)
+
+    # 计算时间
+    end_time = time.time()
+    eval_time = end_time - checkpoint
+    total_time = end_time - start_time
+
+    print(f"模型训练时间: {train_time:.3}s | 评估时间: {eval_time:.3}s | 总运行时间: {total_time:.3}s")
 
 
 class CustomFCNN(nn.Module):
-    '''自定义的全连接神经网络模型'''
+    '''
+    自定义的全连接神经网络模型
+    '''
     def __init__(self, input_size=23, dropout_rate=Config.DROPOUT_RATE):
         super(CustomFCNN, self).__init__()
         self.fc1 = nn.Linear(input_size, 128)
@@ -95,6 +186,9 @@ class CustomFCNN(nn.Module):
         return x
     
 def get_dataset():
+    '''
+    将数据转换成 torch 数据集并返回加载器
+    '''
     # 获取可处理数据
     df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
 
@@ -115,7 +209,9 @@ def get_dataset():
     return train_loader, test_loader
 
 def train_model(model):
-    '''对神经网络模型进行训练的函数'''
+    '''
+    对神经网络模型进行训练的函数
+    '''
     # 定义损失函数、优化器和学习率调度器
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.AdamW(
@@ -162,12 +258,10 @@ def train_model(model):
     total_time = time.time() - start_time
     print(f'\nTraining complete. Elapsed time: {total_time:.2f}s. Highest test accuracy: {max_acc:.4f}')
 
-    # 最终使用 SHAP 值评估模型
-    shap_evaluate(model, 'NeuralNetworks')
-
-
 def train_epoch(model, criterion, optimizer, scheduler, scaler, train_loader):
-    '''训练一个 epoch'''
+    '''
+    训练一个 epoch
+    '''
     running_loss = 0.0
     all_labels = []
     all_preds = []
@@ -205,7 +299,9 @@ def train_epoch(model, criterion, optimizer, scheduler, scaler, train_loader):
     return epoch_loss, epoch_acc
 
 def test_model(model, scaler, criterion, test_loader):
-    '''测试模型'''
+    '''
+    测试模型
+    '''
     model.eval()
     test_loss = 0.0
     all_labels = []
@@ -234,55 +330,3 @@ def test_model(model, scaler, criterion, test_loader):
     test_acc = correct / len(all_labels)
 
     return test_loss, test_acc
-
-def create_neural_networks():
-    # 设置随机种子
-    torch.manual_seed(Config.RANDOM_STATE)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed(Config.RANDOM_STATE)
-
-    # 创建模型并进行训练
-    model = CustomFCNN()
-    train_model(model)
-
-
-def create_randomforest():
-    """
-    随机森林
-    """
-    # 创建模型
-    model = RandomForestClassifier(n_estimators=100, 
-                                   random_state=Config.RANDOM_STATE, 
-                                   class_weight='balanced')
-    # 训练并评估模型
-    # evaluate(model)
-    df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
-    model.fit(X_train_scaled, y_train)
-
-    # 预测和评估
-    y_pred = model.predict(X_test_scaled)
-    print(f"分类准确率: {accuracy_score(y_test, y_pred):.4f}")
-    print("\n分类报告:")
-    print(classification_report(y_test, y_pred))
-
-    # 最终使用 SHAP 值评估模型
-    shap_evaluate(model, 'RandomForest')
-
-
-def create_gradient_boosting():
-    """
-    梯度提升树
-    """
-    model = GradientBoostingClassifier(random_state=Config.RANDOM_STATE)
-    # evaluate(model)
-    df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
-    model.fit(X_train_scaled, y_train)
-
-    # 预测和评估
-    y_pred = model.predict(X_test_scaled)
-    print(f"分类准确率: {accuracy_score(y_test, y_pred):.4f}")
-    print("\n分类报告:")
-    print(classification_report(y_test, y_pred))
-
-    # 最终使用 SHAP 值评估模型
-    shap_evaluate(model, 'gradient_boosting')
