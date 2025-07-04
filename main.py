@@ -2,7 +2,6 @@ import argparse
 
 from config import *
 from model import *
-from model_2 import *
 
 
 def parse_arguments():

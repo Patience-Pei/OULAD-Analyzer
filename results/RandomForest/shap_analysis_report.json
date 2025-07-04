@@ -1,100 +1,100 @@
 {
   "overall_insights": [
-    "Top 5 most important features: num_assessments, avg_score, total_clicks, active_days, num_of_prev_attempts"
+    "Top 5 most important features: num_assessments, avg_score, total_clicks, active_days, studied_credits"
   ],
   "feature_analysis": [
     {
       "feature": "num_assessments",
-      "mean_abs_impact": 0.3116078043089886,
-      "directionality_correlation": -0.793352276087601,
-      "positive_impact_percent": 51.99829836856659,
-      "negative_impact_percent": -22.449713338273437,
+      "mean_abs_impact": 0.311709368318932,
+      "directionality_correlation": -0.7965391220429264,
+      "positive_impact_percent": 51.860982771429484,
+      "negative_impact_percent": -22.52840622798513,
       "interpretation": "Higher values of num_assessments generally decrease the prediction."
     },
     {
       "feature": "avg_score",
-      "mean_abs_impact": 0.13015980887604633,
-      "directionality_correlation": -0.8100748717424385,
-      "positive_impact_percent": 22.040775686308223,
-      "negative_impact_percent": -11.632196959922947,
+      "mean_abs_impact": 0.13201850102814588,
+      "directionality_correlation": -0.8062379569980612,
+      "positive_impact_percent": 21.234931035502953,
+      "negative_impact_percent": -11.814208899133739,
       "interpretation": "Higher values of avg_score generally decrease the prediction."
     },
     {
       "feature": "total_clicks",
-      "mean_abs_impact": 0.020414453480033335,
-      "directionality_correlation": -0.003904814114923185,
-      "positive_impact_percent": 2.710493821003691,
-      "negative_impact_percent": -3.141601537788091,
+      "mean_abs_impact": 0.022900832463879226,
+      "directionality_correlation": 0.01961401745120303,
+      "positive_impact_percent": 3.8679639500890937,
+      "negative_impact_percent": -2.979684123122193,
       "interpretation": "The relationship between total_clicks and prediction is complex and non-linear."
     },
     {
       "feature": "active_days",
-      "mean_abs_impact": 0.015789943912075912,
-      "directionality_correlation": -0.06039977591534277,
-      "positive_impact_percent": 3.9718407757937357,
-      "negative_impact_percent": -2.5144900289962075,
+      "mean_abs_impact": 0.017776938238086633,
+      "directionality_correlation": -0.10208661545675413,
+      "positive_impact_percent": 4.124797249130576,
+      "negative_impact_percent": -2.533612615146303,
       "interpretation": "The relationship between active_days and prediction is complex and non-linear."
     },
     {
-      "feature": "num_of_prev_attempts",
-      "mean_abs_impact": 0.013237403819354199,
-      "directionality_correlation": 0.649701218364737,
-      "positive_impact_percent": 5.880991432246308,
-      "negative_impact_percent": -1.3149391703529005,
-      "interpretation": "Higher values of num_of_prev_attempts generally increase the prediction."
+      "feature": "studied_credits",
+      "mean_abs_impact": 0.012996019949348021,
+      "directionality_correlation": 0.0992786597310586,
+      "positive_impact_percent": 3.0593786279322766,
+      "negative_impact_percent": -2.001655239868953,
+      "interpretation": "The relationship between studied_credits and prediction is complex and non-linear."
     }
   ],
   "sample_analysis": [
     {
       "type": "most_impact",
-      "sample_idx": 33,
-      "actual_label": 1,
+      "sample_idx": 68,
+      "actual_label": 0,
       "predicted_label": 1,
-      "prediction_prob": 1.0,
+      "prediction_prob": 1.0000000000000002,
       "top_features": [
         {
-          "feature": "imd_band_40-50%",
-          "value": 2.968712329864502,
-          "shap_value": 0.30984125192961937,
-          "impact": "positive"
-        },
-        {
           "feature": "avg_score",
-          "value": -0.6666954159736633,
-          "shap_value": 0.214373835100189,
+          "value": -0.9815801978111267,
+          "shap_value": 0.3721096138996097,
           "impact": "positive"
         },
         {
-          "feature": "num_assessments",
-          "value": -0.1849207878112793,
-          "shap_value": -0.2123511522088938,
-          "impact": "negative"
+          "feature": "gender_F",
+          "value": 1.099574089050293,
+          "shap_value": 0.1370075179760546,
+          "impact": "positive"
+        },
+        {
+          "feature": "studied_credits",
+          "value": 0.3342535197734833,
+          "shap_value": 0.13645841533574288,
+          "impact": "positive"
         }
       ]
     },
     {
       "type": "least_impact",
-      "sample_idx": 10,
+      "sample_idx": 21,
       "actual_label": 0,
       "predicted_label": 0,
       "prediction_prob": 5.551115123125783e-17,
       "top_features": [
         {
-          "feature": "num_assessments",
-          "value": 0.612175464630127,
-          "shap_value": -0.18837174975848336,
-          "impact": "negative"
-        },
-        {
           "feature": "avg_score",
-          "value": 0.7824518084526062,
-          "shap_value": -0.1223568682974012,
+          "value": 0.7655225396156311,
+          "shap_value": -0.2142420332267136,
           "impact": "negative"
         },
         {
-          "feature": "active_days",
-          "value": 1.298754334449768,
-          "shap_value": -0.01673149438273986,
+          "feature": "num_assessments",
+          "value": -0.1849207878112793,
+          "shap_value": -0.12349841980547824,
+          "impact": "negative"
+        },
+        {
+          "feature": "imd_band_90-100%",
+          "value": 3.27190899848938,
+          "shap_value": -0.016543031600445457,
           "impact": "negative"
         }
       ]
@@ -109,19 +109,19 @@
         {
           "feature": "num_assessments",
           "value": 1.1435730457305908,
-          "shap_value": -0.25618371092393555,
+          "shap_value": -0.23429919663052823,
           "impact": "negative"
         },
         {
           "feature": "avg_score",
           "value": -0.18651917576789856,
-          "shap_value": -0.08220691339653587,
+          "shap_value": -0.0901271351688635,
           "impact": "negative"
         },
         {
           "feature": "imd_band_70-80%",
           "value": 3.0755598545074463,
-          "shap_value": -0.020562470096803787,
+          "shap_value": -0.03471648077373052,
           "impact": "negative"
         }
       ]
@@ -136,19 +136,19 @@
         {
           "feature": "num_assessments",
           "value": 1.4092717170715332,
-          "shap_value": -0.34652532136303715,
+          "shap_value": -0.2971751412429379,
           "impact": "negative"
         },
         {
           "feature": "num_of_prev_attempts",
           "value": 1.8447787761688232,
-          "shap_value": -0.0915453053611377,
+          "shap_value": -0.07553672316384186,
           "impact": "negative"
         },
         {
-          "feature": "imd_band_20-30%",
-          "value": -0.35116827487945557,
-          "shap_value": -0.053893159726590256,
+          "feature": "total_clicks",
+          "value": 0.36822739243507385,
+          "shap_value": -0.00728813559322028,
           "impact": "negative"
         }
       ]

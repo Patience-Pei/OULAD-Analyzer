@@ -6,12 +6,14 @@ from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 import time
 from config import *
 from preprocess import get_data, model_data
-from evaluate import evaluate, shap_evaluate
+from evaluate import shap_evaluate
 
 def create_logistic_regression():
     '''使用逻辑回归模型进行预测'''
@@ -242,3 +244,45 @@ def create_neural_networks():
     # 创建模型并进行训练
     model = CustomFCNN()
     train_model(model)
+
+
+def create_randomforest():
+    """
+    随机森林
+    """
+    # 创建模型
+    model = RandomForestClassifier(n_estimators=100, 
+                                   random_state=Config.RANDOM_STATE, 
+                                   class_weight='balanced')
+    # 训练并评估模型
+    # evaluate(model)
+    df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
+    model.fit(X_train_scaled, y_train)
+
+    # 预测和评估
+    y_pred = model.predict(X_test_scaled)
+    print(f"分类准确率: {accuracy_score(y_test, y_pred):.4f}")
+    print("\n分类报告:")
+    print(classification_report(y_test, y_pred))
+
+    # 最终使用 SHAP 值评估模型
+    shap_evaluate(model, 'RandomForest')
+
+
+def create_gradient_boosting():
+    """
+    梯度提升树
+    """
+    model = GradientBoostingClassifier(random_state=Config.RANDOM_STATE)
+    # evaluate(model)
+    df, X_train_scaled, y_train, X_test_scaled, y_test = model_data()
+    model.fit(X_train_scaled, y_train)
+
+    # 预测和评估
+    y_pred = model.predict(X_test_scaled)
+    print(f"分类准确率: {accuracy_score(y_test, y_pred):.4f}")
+    print("\n分类报告:")
+    print(classification_report(y_test, y_pred))
+
+    # 最终使用 SHAP 值评估模型
+    shap_evaluate(model, 'gradient_boosting')
