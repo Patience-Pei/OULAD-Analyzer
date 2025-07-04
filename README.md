@@ -1,6 +1,6 @@
 ## 项目结构
 ```
-labFinal/
+OULAD-Analyzer/
 ├── anonymisedData/             # 数据集
 │   ├── assessments.csv
 │   ├── courses.csv
@@ -24,12 +24,16 @@ labFinal/
 ```
 
 ## 运行步骤
-1. 安装依赖：
+**1. 安装依赖：**
 ```bash
 pip install -r requirements.txt
 ```
 
-2. 运行程序：
+**2. 添加数据集：**
+
+- 将 OULAD 数据集按照上述项目结构添加到项目根目录中
+
+**3. 运行程序：**
 ```bash
 python main.py --model LR   # 运行逻辑回归模型
 python main.py --model NN   # 运行神经网络模型
