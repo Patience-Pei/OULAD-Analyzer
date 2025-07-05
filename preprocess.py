@@ -48,7 +48,7 @@ def load_data():
     # 统计每个学生-课程-学期的平均分和作业数
     sa_stats = sa_full.groupby(["id_student", "code_module", "code_presentation"]).agg(
         avg_score=("score", "mean"),
-        num_assessments=("score", "count")
+        num_assignments=("score", "count")
     ).reset_index()
 
     # 统计前n_weeks的VLE活跃度
@@ -79,7 +79,7 @@ def preprocess_data(df):
     # 选择特征
     feature_cols = [
         "age_band", "gender", "imd_band", "disability", "num_of_prev_attempts", "studied_credits",
-        "avg_score", "num_assessments", "total_clicks", "active_days"
+        "avg_score", "num_assignments", "total_clicks", "active_days"
     ]
     df = df.dropna(subset=feature_cols + ["label"])
     # 类别特征独热编码
